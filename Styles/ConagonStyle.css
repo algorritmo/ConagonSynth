@@ -1,0 +1,336 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0px;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: rgb(4, 4, 4);
+  background-color: rgb(119, 205, 196);
+  padding: 5px;
+  border: 8px solid #F0A762;
+  border-radius: 20px;
+  margin: 10px;
+  text-align: center;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+
+}
+
+
+.keyboard {
+  width: auto;
+  padding: 0;
+  margin: 0;
+}
+
+
+
+.item input {
+  accent-color: #F0A762
+    /* Cambia el color del título a negro */
+}
+
+
+.item-span-3 {
+  grid-column: span 3;
+}
+
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Estilos para el knob de frecuencia */
+#frequency-slider1 {
+  width: 40%;
+  margin-top: 1px;
+}
+
+#frequency-slider2 {
+  width: 40%;
+  margin-top: 1px;
+}
+
+/* Switch Togle*/
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 24px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #2b2929;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked+.slider {
+  background-color: #F0A762;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+  -webkit-transform: translateX(29px);
+  -ms-transform: translateX(29px);
+  transform: translateX(29px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* Estilos para ubicación de las imagenes */
+.image-overlay {
+  position: relative;
+  top: -150px;
+  left: -50px;
+  transform: translateX(-50%);
+  background-color: rgba(175, 23, 23, 0.5);
+  pointer-events: none;
+
+}
+
+.image-overlay img {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.image-overlay-2 {
+  position: relative;
+  top: -150px;
+  left: -50px;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+
+}
+
+.image-overlay-2 img {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+ /* Cambio de color para las teclas blancas */
+ .key.active-key {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Cambio de color para las teclas negras */
+.key.black-key.active-key {
+  background-color: #fff;
+  color: #000;
+}
+
+/*volumen slider vertical*/
+.range-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+  justify-content: flex-end;
+
+}
+/* Agregar espacio entre los sliders en .range-group */
+.range-group .range-container:not(:last-child) {
+  margin-right: 0px; /* Ajusta el valor de acuerdo a tu preferencia */
+}
+
+.range-container-h {
+  width: 80%;
+  margin: 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.range-label {
+  font-size: 12px;
+}
+
+.range-label-h {
+  flex: 0 0 80px;
+  text-align: center;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.range-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type="range"][orient="vertical"] {
+  writing-mode: bt-lr;
+  width: 100px;
+  appearance: slider-vertical;
+}
+
+.range-group {
+  display: inline-flex;
+  flex-direction: row;
+}
+
+/*PIANO*/
+.keyboard {
+  width: auto;
+  padding: 0;
+  margin: 0;
+}
+
+.key-set-parent {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 120px;
+}
+
+.key {
+  position: relative;
+  cursor: pointer;
+  font: 10px "Open Sans", "Lucida Grande", "Arial", sans-serif;
+  border: 1px solid black;
+  border-radius: 5px;
+  width: 40px;
+  height: 120px;
+  background-color: white;
+  text-align: center;
+  box-shadow: 2px 2px darkgray;
+  display: inline-block;
+  margin-right: 3px;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.key.black-key {
+  position: absolute;
+  background-color: #000;
+  color: #fff;
+  width: 36px;
+  height: 80px;
+  top: 0px;
+  left: 22px;
+  z-index: 1;
+  pointer-events: auto;
+  vertical-align: top;
+}
+
+.key div {
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  width: 100%;
+  pointer-events: none;
+}
+
+.key div sub {
+  font-size: 8px;
+  pointer-events: none;
+}
+
+.key:hover {
+  background-color: #eef;
+}
+
+.key.black-key:hover {
+  background-color: #778;
+}
+
+.key:active {
+  background-color: #000;
+  color: #fff;
+}
+
+.key.black-key:active {
+  background-color: #fff;
+  color: #000;
+}
+
+.octave {
+  display: inline-block;
+  padding: 0 6px 0 0;
+}
+
+.left {
+  width: 50%;
+  position: absolute;
+  left: 0;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.left span,
+.left input {
+  vertical-align: middle;
+}
+
+.right {
+  width: 50%;
+  position: absolute;
+  right: 0;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.right span {
+  vertical-align: middle;
+}
+
+.right input {
+  vertical-align: baseline;
+}
