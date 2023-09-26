@@ -14,7 +14,7 @@
 </head>
 
 <body>
-        <h1 class="item">CONAGON SYNTH</h1>
+    <h1 class="item">CONAGON SYNTH</h1>
     <div class="grid-container">
         <div class="item">
             <h2>Forma de Onda Oscilador 1</h2>
@@ -51,7 +51,7 @@
                     orient="vertical" name="volume">
                 <span class="range-label">Mute</span>
             </div>
-        </br>
+            </br>
             <h3 for="balancedMaster">Balanceador Master</h3>
             <div class="range-container-h">
                 <span class="range-label-h">Osc. 1</span>
@@ -128,14 +128,14 @@
             <div class="range-group">
                 <div class="range-container">
                     <label for="attack-range">Attack(T)</label>
-                    <span  id="attackValue">1s</span>
+                    <span id="attackValue">1s</span>
                     <input type="range" id="attack-range" min="0.0" max="1.0" step="0.01" value="0.1" orient="vertical"
                         name="attack">
                     <span class="range-label">0s</span>
                 </div>
                 <div class="range-container">
                     <label for="decay-range">Decay(T)</label>
-                    <span  id="decayValue">1s</span>
+                    <span id="decayValue">1s</span>
                     <input type="range" id="decay-range" min="0.0" max="1.0" step="0.01" value="0.5" orient="vertical"
                         name="decay">
                     <span class="range-label">0s</span>
@@ -175,14 +175,14 @@
                 </legend>
 
             </div>
-     
+
             <table class="table-border-none">
                 <tr>
                     <td>
                         <label for="time-scale-range">Delay:</label>
-                        
-                        <br/>
-                        0s 
+
+                        <br />
+                        0s
                         <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" name="delay">
                         <span id="delayValue">1s</span>
                     </td>
@@ -190,8 +190,8 @@
                 <tr>
                     <td>
                         <label for="time-scale-range">Feedback:</label>
-                        <br/>
-                        0s 
+                        <br />
+                        0s
                         <input type="range" min="0.0" max="0.7" step="0.01" value="0.5" name="feedback">
                         <span id="feedbackValue">100%</span>
                     </td>
@@ -206,16 +206,132 @@
     <div style="text-align: center;">
         <a href="https://github.com/algorritmo/ConagonSynth.git" target="_blank">
             <img src="Images/github.png" alt="Descripción de la imagen">
-            
+
         </a>
+        <button id="mostrarPopup">
+            <img src="Images/duda.png" alt="Tornillo">
+        </button>
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <h2>Descripción de Componentes y Características</h2>
 
+                <h3>Osciladores (OSC1 y OSC2):</h3>
+                <ul>
+                    <li>Cada oscilador puede encenderse o apagarse individualmente.</li>
+                    <li>Para cada oscilador, hay una "perilla" que permite cambiar entre las siguientes formas de onda:
+                    </li>
+                    <li>Rango de 0 a 0.1: Genera el sonido de un piano por defecto.</li>
+                    <!-- Agrega más puntos si es necesario -->
+                </ul>
+
+                <h3>Volumen Máster:</h3>
+                <ul>
+                    <li>Controla el volumen general del sonido generado por ambos osciladores.</li>
+                    <li>Cuenta con un control deslizante (slider) para ajustar el balance de volumen entre el oscilador
+                        1 (izquierda) y el oscilador 2 (derecha).</li>
+                    <!-- Agrega más puntos si es necesario -->
+                </ul>
+
+                <h3>Envolvente de amplitud (Filtro ADSR)</h3>
+                <ul>
+                    <li>Esta sección permite controlar el envolvente de amplitud del sonido.</li>
+                    <li>Incluye sliders para ajustar el ataque (attack), la caída (decay), la retención (sustain) y la liberación (release) del sonido.</li>
+                    <li>Incluye sliders para ajustar el ataque (attack), la caída (decay), la retención (sustain) y la liberación (release) del sonido.</li>
+                   <li>
+                    Además, se ha agregado un control deslizante para "time scale", que permite alargar el tiempo de cada etapa del envolvente de amplitud entre 0 y 2 segundos.
+                   </li>
+
+                </ul>
+
+
+                <!-- Agrega más secciones (filtros, teclado MIDI, etc.) con títulos y listas si es necesario -->
+
+                <h3>Teclado MIDI:</h3>
+                <ul>
+                    <li>Permite tocar las notas del sintetizador utilizando un teclado MIDI o las teclas
+                        correspondientes en el teclado del ordenador (con clic).</li>
+                    <li>Al tocar una nota en el teclado MIDI, se generará el sonido según la configuración de los
+                        osciladores y el filtro ADSR.</li>
+                    <!-- Agrega más puntos si es necesario -->
+                </ul>
+                <table>
+                    <caption>Octava 3</caption>
+                    <tr>
+                        <th>TECLA</th>
+                        <th>NOTA</th>
+                        <th>FRECUENCIA</th>
+                    </tr>
+                    <tr>
+                        <td>Q</td>
+                        <td>C3</td>
+                        <td>130.81 Hz</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>C#3</td>
+                        <td>138.59 Hz</td>
+                    </tr>
+                    <tr>
+                        <td>W</td>
+                        <td>D3</td>
+                        <td>146.83 Hz</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>D#3</td>
+                        <td>155.56 Hz</td>
+                    </tr>
+                    <tr>
+                        <td>E</td>
+                        <td>E3</td>
+                        <td>164.81 Hz</td>
+                    </tr>
+                    <tr>
+                        <td>R</td>
+                        <td>F3</td>
+                        <td>174.61 Hz</td>
+                    </tr>
+                    <tr>
+                        <td>S</td>
+                        <td>F#3</td>
+                        <td>185.00 Hz</td>
+                    </tr>
+                    <tr>
+                        <td>T</td>
+                        <td>G3</td>
+                        <td>196.00 Hz</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>G#3</td>
+                        <td>207.65 Hz</td>
+                    </tr>
+                    <tr>
+                        <td>Y</td>
+                        <td>A3</td>
+                        <td>220.00 Hz</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>A#3</td>
+                        <td>233.08 Hz</td>
+                    </tr>
+                    <tr>
+                        <td>U</td>
+                        <td>B3</td>
+                        <td>246.94 Hz</td>
+                    </tr>
+                </table>
+
+
+                <button id="cerrarPopup">Cerrar</button>
+            </div>
+        </div>
     </div>
-
 
     <script src='Controlador/ConagonControlador.js'>
 
     </script>
-
 </body>
 
 </html>

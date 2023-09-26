@@ -1,4 +1,11 @@
 function sintetizador() {
+
+
+  const mostrarPopupBtn = document.getElementById("mostrarPopup");
+  const popup = document.getElementById("popup");
+  const cerrarPopupBtn = document.getElementById("cerrarPopup");
+
+
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
   const oscillatorMap = new Map();
@@ -857,14 +864,29 @@ function sintetizador() {
     if (stateOsc2)
       oscillator2.stop(t_released + releaseDuration);
   }
+  // Función para mostrar el popup
+  function mostrarPopup() {
+    popup.style.display = "block";
+  }
+
+  // Función para ocultar el popup
+  function ocultarPopup() {
+    popup.style.display = "none";
+  }
+
+  // Agregar eventos click a los botones
+  mostrarPopupBtn.addEventListener("click", mostrarPopup);
+  cerrarPopupBtn.addEventListener("click", ocultarPopup);
+  popup.addEventListener("click", ocultarPopup); // Cierra el popup al hacer clic fuera de él
+
 
 
 }
 
 
+
 document.addEventListener('DOMContentLoaded', function () {
   sintetizador(); // Llamada a la función algo cuando la página se carga
-
 
 
 });
