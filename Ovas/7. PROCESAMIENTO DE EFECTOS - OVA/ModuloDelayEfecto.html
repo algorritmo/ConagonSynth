@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Efecto Delay</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <style>
+    canvas {
+      background-color: #000;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="text-align: center;">
+    <h1>Efecto Delay</h1>
+
+    <div>
+      <label>Forma de onda</label>
+      <select id='Waveform'>
+        <option value='sine'>Senoidal</option>
+        <option value='square'>Cuadrada</option>
+        <option value='sawtooth'>Dientes de sierra</option>
+        <option value='triangle'>Triangular</option>
+      </select>
+    </div>
+    <div>
+      <label for="Frequency">Frecuencia(Hz):</label>
+      <input type='range' id='Frequency' style="accent-color: #F0A762" min=0 max=5000 value=400 step='1'>
+      <span id="carrierFrequencyDisplay" contentEditable="true" onblur="updateFrequency()">440</span>
+      <label>Hz</label>
+    </div>
+    <div>
+      <label>Feedback(dB):</label>
+      <input type='range' id='Gain' style="accent-color: #F0A762" min=0.0 max=0.8 value=0.8 step='0.1'>
+      <span id="carrierGainDisplay" contentEditable="true" onblur="updateGain()">0.8</span>
+      <label>dB</label>
+    </div>
+    <div>
+      <label>Time(ms):</label>
+      <input type='range' id='Delay' style="accent-color: #F0A762" min=0.00 max=0.2 value=0.04 step='0.01'>
+      <span id="carrierDelayDisplay" contentEditable="true" onblur="updateDelay()">0.04</span>
+      <label>ms</label>
+    </div>
+    <br>
+    <div>
+      <p>Espectograma</p>
+      <canvas id="spectrogram"></canvas>
+    </div>
+    <div>
+      <button style="border-radius: 15px; padding: 10px; font-family: 'comic sans ms', sans-serif; background-color: rgb(0%, 244%, 227%); 
+      color: black; text-decoration: none; box-shadow: 3px 3px 5px grey;" onclick='playSound()'
+        id='Play'>Pulsar</button>
+    </div>
+  </div>
+
+
+
+  <script>
+    var context = new (window.AudioContext || window.webkitAudioContext)();
+    var canvas = document.getElementById("spectrogram");
+    var canvasCtx = canvas.getContext("2d");
+
+    // Configura el canvas para la visualización del espectro
+    var analyser = context.createAnalyser();
+    analyser.fftSize = 256;
+    var bufferLength = analyser.frequencyBinCount;
+    var dataArray = new Uint8Array(bufferLength);
+
+    // Crea un OscillatorNode para el tono
+    var tone = context.createOscillator();
+    tone.type = 'sine'; // Valor por defecto
+    tone.frequency.setValueAtTime(6000, context.currentTime);
+
+    let carrierFrequencySlider = document.getElementById("Frequency");
+    let carrierFrequencyDisplay = document.getElementById("carrierFrequencyDisplay");
+
+    let carrierGainSlider = document.getElementById("Gain");
+    let carrierGainDisplay = document.getElementById("carrierGainDisplay");
+
+    let carrierDelaySlider = document.getElementById("Delay");
+    let carrierDelayDisplay = document.getElementById("carrierDelayDisplay");
+
+    // Crea los nodos de procesamiento
+    var toneGain = context.createGain();
+    toneGain.gain.setValueAtTime(0, context.currentTime);
+    var feedback = context.createGain();
+    feedback.gain.setValueAtTime(0.8, context.currentTime);
+    var delay = context.createDelay();
+    delay.delayTime.setValueAtTime(0.08, context.currentTime);
+
+
+    // Conecta los nodos
+    tone.connect(toneGain);
+    toneGain.connect(delay);
+    delay.connect(feedback);
+    feedback.connect(delay);
+    delay.connect(context.destination);
+    delay.connect(analyser);
+    tone.start();
+    // Actualiza el espectro en el canvas
+    function updateSpectrogram() {
+      analyser.getByteFrequencyData(dataArray);
+      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+      var barWidth = (canvas.width / bufferLength) * 2;
+      var barHeight;
+      var x = 0;
+      for (var i = 0; i < bufferLength; i++) {
+        barHeight = dataArray[i];
+        canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',167,98)';
+        canvasCtx.fillRect(x, canvas.height - barHeight / 2, barWidth, barHeight / 2);
+        x += barWidth + 1;
+      }
+      requestAnimationFrame(updateSpectrogram);
+    }
+
+
+
+    // Función para reproducir el sonido
+    function playSound() {
+
+      context.resume().then(function () {
+
+
+        let now = context.currentTime;
+        tone.type = document.getElementById('Waveform').value;
+        toneGain.gain.setValueAtTime(1, now);
+        toneGain.gain.linearRampToValueAtTime(0, now + 0.05);
+      });
+    }
+
+    // Asigna eventos a los controles deslizantes
+    document.getElementById('Delay').oninput = () => delay.delayTime.value = parseFloat(document.getElementById('Delay').value);
+    document.getElementById('Gain').oninput = () => feedback.gain.value = (document.getElementById('Gain').value);
+    document.getElementById('Frequency').oninput = () => {
+      var newFrequency = parseFloat(document.getElementById('Frequency').value);
+      tone.frequency.setValueAtTime(newFrequency, context.currentTime);
+    }
+
+
+
+    // Comienza la actualización del espectro
+    updateSpectrogram();
+
+    //FRECUENCIA
+    carrierFrequencySlider.addEventListener("input", () => {
+      const frequency = parseFloat(carrierFrequencySlider.value);
+      tone.frequency.setValueAtTime(frequency, context.currentTime);
+      carrierFrequencyDisplay.textContent = frequency;
+
+    });
+    // Función para actualizar la frecuencia
+    function updateFrequency() {
+      const carrierFrequencyDisplay = document.getElementById("carrierFrequencyDisplay");
+      const newFrequencyText = carrierFrequencyDisplay.textContent;
+      const newFrequency = parseFloat(newFrequencyText);
+
+      if (!isNaN(newFrequency)) {
+        // Verificar que el valor sea un número válido
+        document.getElementById('Frequency').value = newFrequency;
+        tone.frequency.setValueAtTime(newFrequency, context.currentTime);
+      } else {
+        alert('Ingresa un valor numérico válido.');
+      }
+    }
+
+
+    //GAIN/FEEDBACK
+    carrierGainSlider.addEventListener("input", () => {
+      const Gain = parseFloat(carrierGainSlider.value);
+      feedback.gain.setValueAtTime(Gain, context.currentTime);
+      carrierGainDisplay.textContent = Gain;
+    });
+
+    function updateGain() {
+      const carrierGainDisplay = document.getElementById("carrierGainDisplay");
+      const newGainText = carrierGainDisplay.textContent;
+      const newGain = parseFloat(newGainText);
+
+      if (!isNaN(newGain)) {
+        // Verificar que el valor sea un número válido
+        document.getElementById('Gain').value = newGain;
+        feedback.gain.setValueAtTime(newGain, context.currentTime);
+      } else {
+        alert('Ingresa un valor numérico válido.');
+      }
+    }
+
+    //DELAY/TIME
+    carrierDelaySlider.addEventListener("input", () => {
+      const Delay = parseFloat(carrierDelaySlider.value);
+      delay.delayTime.setValueAtTime(Delay, context.currentTime);
+      carrierDelayDisplay.textContent = Delay;
+    });
+
+    function updateDelay() {
+      const carrierDelayDisplay = document.getElementById("carrierDelayDisplay");
+      const newDelayText = carrierDelayDisplay.textContent;
+      const newDelay = parseFloat(newDelayText);
+
+      if (!isNaN(newDelay)) {
+        // Verificar que el valor sea un número válido
+        document.getElementById('Delay').value = newDelay;
+        delay.delayTime.setValueAtTime(newDelay, context.currentTime);
+      } else {
+        alert('Ingresa un valor numérico válido.');
+      }
+    }
+    // Agregar evento al span para detectar la tecla Enter
+  /*  document.getElementById("carrierDelayDisplay").addEventListener("keydown", function (event) {
+      const newDelayText = carrierDelayDisplay.textContent;
+      if (event.keyCode === 13 && !newDelayText.isNaN && (parseFloat(newDelayText) > 0.00 || parseFloat(newDelayText) > 0.02) ) { // 13 es el código de tecla Enter
+        document.getElementById('Delay').value = newDelayText;
+        event.preventDefault(); // Evitar el comportamiento predeterminado de Enter (nueva línea)
+
+        updateFrequency();
+      }else{
+        alert('Ingresa un valor numérico válido.');
+      }
+    });*/
+
+
+
+
+  </script>
+</body>
+
+</html>

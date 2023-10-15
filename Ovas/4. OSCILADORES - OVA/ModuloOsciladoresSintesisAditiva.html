@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Síntesis Aditiva</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: linear-gradient(135deg, #ABDCFF 10%, #0396FF 100%);
+        }
+
+
+        .parent {
+            display: grid;
+            grid-template-rows: auto auto 1fr;
+            grid-template-columns: auto auto;
+            gap: 10px;
+            text-align: center;
+        }
+
+        /* Estilos para cada div */
+        .div1,
+        .div2,
+        .div3,
+        .div4,
+        .div5 {
+            border: 3px solid #0065AB;
+            padding: 10px;
+            font-family: "Comic Sans MS", cursive, sans-serif;
+        }
+
+
+        .div5 {
+            grid-column: span 2;
+        }
+
+
+        h1 {
+            grid-column: span 2;
+            width: 100%;
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            margin: 0;
+            border: none;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 15px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+
+        input:checked+.slider {
+            background-color: #F0A762;
+        }
+
+        input:checked+.slider:before {
+            -webkit-transform: translateX(30px);
+            -ms-transform: translateX(30px);
+            transform: translateX(30px);
+        }
+
+
+        .slider.round {
+            border-radius: 30px;
+        }
+    </style>
+    <title>OVA - Osciladores</title>
+</head>
+
+<body>
+    <div class="parent">
+        <h1>Síntesis Aditiva con Dos Osciladores</h1>
+        <div class="div1">
+            <h2>Oscilador 1</h2>
+            <div>
+                <label for="freq-slider-1">Frecuencia:</label>
+                <input id="freq-slider-1" style="accent-color: #F0A762" type="range" min="0" max="2000" step="1"
+                    value="440">
+                <span id="freq-value-1">440</span>
+            </div>
+
+            <div>
+                <label for="amp-slider-1">Amplitud:</label>
+                <input id="amp-slider-1" style="accent-color: #F0A762" type="range" min="0" max="1" step="0.1"
+                    value="0.3">
+                <span id="amp-value-1">0.3</span>
+            </div>
+
+            <div>
+                <label for="waveform-select-1">Tipo de Onda:</label>
+                <select id="waveform-select-1" class="form-control">
+                    <option value="sine">Sine</option>
+                    <option value="square">Square</option>
+                    <option value="sawtooth">Sawtooth</option>
+                    <option value="triangle">Triangle</option>
+                </select>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="oscillator-enable-1" value="false">
+                <span class="slider"></span>
+            </label>
+            <div>ON/OFF</div>
+        </div>
+
+        <div class="div2">
+            <h2>Oscilador 2</h2>
+            <div>
+                <label for="freq-slider-2">Frecuencia:</label>
+                <input id="freq-slider-2" style="accent-color: #F0A762" type="range" min="0" max="2000" step="1"
+                    value="660">
+                <span id="freq-value-2">660</span>
+            </div>
+
+            <div>
+                <label for="amp-slider-2">Amplitud:</label>
+                <input id="amp-slider-2" style="accent-color: #F0A762" type="range" min="0" max="1" step="0.1"
+                    value="0.3">
+                <span id="amp-value-2">0.3</span>
+            </div>
+
+            <div>
+                <label for="waveform-select-2">Tipo de Onda:</label>
+                <select id="waveform-select-2">
+                    <option value="sine">Sine</option>
+                    <option value="square">Square</option>
+                    <option value="sawtooth">Sawtooth</option>
+                    <option value="triangle">Triangle</option>
+                </select>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="oscillator-enable-2" value="false">
+                <span class="slider"></span>
+            </label>
+            <div>ON/OFF</div>
+        </div>
+
+        <div class="div3">
+            <h2>Oscilador 3</h2>
+            <div>
+                <label for="freq-slider-3">Frecuencia:</label>
+                <input id="freq-slider-3" style="accent-color: #F0A762" type="range" min="0" max="2000" step="1"
+                    value="660">
+                <span id="freq-value-3">660</span>
+            </div>
+
+            <div>
+                <label for="amp-slider-3">Amplitud:</label>
+                <input id="amp-slider-3" style="accent-color: #F0A762" type="range" min="0" max="1" step="0.1"
+                    value="0.3">
+                <span id="amp-value-3">0.3</span>
+            </div>
+
+            <div>
+                <label for="waveform-select-3">Tipo de Onda:</label>
+                <select id="waveform-select-3">
+                    <option value="sine">Sine</option>
+                    <option value="square">Square</option>
+                    <option value="sawtooth">Sawtooth</option>
+                    <option value="triangle">Triangle</option>
+                </select>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="oscillator-enable-3" value="false">
+                <span class="slider"></span>5
+            </label>
+            <div>ON/OFF</div>
+        </div>
+
+        <div class="div4">
+            <h2>Oscilador 4</h2>
+            <div>
+                <label for="freq-slider-4">Frecuencia:</label>
+                <input id="freq-slider-4" style="accent-color: #F0A762" type="range" min="0" max="2000" step="1"
+                    value="660">
+                <span id="freq-value-4">660</span>
+            </div>
+
+            <div>
+                <label for="amp-slider-4">Amplitud:</label>
+                <input id="amp-slider-4" style="accent-color: #F0A762" type="range" min="0" max="1" step="0.1"
+                    value="0.3">
+                <span id="amp-value-4">0.3</span>
+            </div>
+
+            <div>
+                <label for="waveform-select-4">Tipo de Onda:</label>
+                <select id="waveform-select-4">
+                    <option value="sine">Sine</option>
+                    <option value="square">Square</option>
+                    <option value="sawtooth">Sawtooth</option>
+                    <option value="triangle">Triangle</option>
+                </select>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="oscillator-enable-4" value="false">
+                <span class="slider"></span>
+            </label>
+            <div>ON/OFF</div>
+        </div>
+
+        <div class="div5">
+            <h2>Analizador de Onda</h2>
+            <canvas id="waveform" width="800" height="300" style="border: 1px solid black;"></canvas>
+        </div>
+
+        <p><a style="border-radius: 20px; padding: 10px; font-family: 'comic sans ms', sans-serif; background-color: rgb(0%, 244%, 227%); 
+            color: black; text-decoration: none; box-shadow: 3px 3px 3px grey; position: absolute; bottom: 40px; right: 30px;"
+                title="Dudas" class="exe-dialog-link" rel="lightbox" href="#tae92ebfb-0c58-9730-539b-e3c588ff5baa"
+                id="linkae92ebfb-0c58-9730-539b-e3c588ff5baa">?</a></p>
+    </div>
+    <script>
+        let audioContext;
+        var oscillator1;
+        var oscillator2;
+        var oscillator3;
+        var oscillator4;
+        let gainNode1;
+        let gainNode2;
+        let gainNode3;
+        let gainNode4;
+        let canvas;
+        let canvasContext;
+
+        function initializeCanvas() {
+            canvas = document.getElementById("waveform");
+            canvasContext = canvas.getContext("2d");
+            canvasContext.fillStyle = "white";
+            canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawWaveform(dataArray) {
+            canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+
+            canvasContext.lineWidth = 2;
+            canvasContext.strokeStyle = "black";
+
+            canvasContext.beginPath();
+
+            const sliceWidth = canvas.width / dataArray.length;
+            let x = 0;
+
+            for (let i = 0; i < dataArray.length; i++) {
+                const v = dataArray[i] / 128.0;
+                const y = v * canvas.height / 2;
+
+                if (i === 0) {
+                    canvasContext.moveTo(x, y);
+                } else {
+                    canvasContext.lineTo(x, y);
+                }
+
+                x += sliceWidth;
+            }
+
+            canvasContext.lineTo(canvas.width, canvas.height / 2);
+            canvasContext.stroke();
+        }
+
+        function startSynthesis() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            // Crear nodos de ganancia para cada oscilador
+            gainNode1 = audioContext.createGain();
+            gainNode2 = audioContext.createGain();
+            gainNode3 = audioContext.createGain();
+            gainNode4 = audioContext.createGain();
+            //OSCILADOR 1
+            oscillator1 = audioContext.createOscillator();
+            oscillator1.type = document.getElementById("waveform-select-1").value;
+            oscillator1.frequency.setValueAtTime(parseFloat(document.getElementById("freq-slider-1").value), audioContext.currentTime);
+            oscillator1.connect(gainNode1); // Conectar el oscilador al nodo de ganancia 1
+            gainNode1.connect(audioContext.destination); // Conectar el nodo de ganancia al destino de audio
+            gainNode1.gain.setValueAtTime(parseFloat(document.getElementById("amp-slider-1").value), audioContext.currentTime);
+
+            //OSCILADOR 2
+            oscillator2 = audioContext.createOscillator();
+            oscillator2.type = document.getElementById("waveform-select-2").value;
+            oscillator2.frequency.setValueAtTime(parseFloat(document.getElementById("freq-slider-2").value), audioContext.currentTime);
+            oscillator2.connect(gainNode2); // Conectar el oscilador al nodo de ganancia 1
+            gainNode2.connect(audioContext.destination); // Conectar el nodo de ganancia al destino de audio
+            gainNode2.gain.setValueAtTime(parseFloat(document.getElementById("amp-slider-2").value), audioContext.currentTime);
+
+            //OSCILADOR 3
+            oscillator3 = audioContext.createOscillator();
+            oscillator3.type = document.getElementById("waveform-select-3").value;
+            oscillator3.frequency.setValueAtTime(parseFloat(document.getElementById("freq-slider-3").value), audioContext.currentTime);
+            oscillator3.connect(gainNode3); // Conectar el oscilador al nodo de ganancia 1
+            gainNode3.connect(audioContext.destination); // Conectar el nodo de ganancia al destino de audio
+            gainNode3.gain.setValueAtTime(parseFloat(document.getElementById("amp-slider-3").value), audioContext.currentTime);
+
+            //OSCILADOR 4
+           oscillator4 = audioContext.createOscillator();
+            oscillator4.type = 'sine';
+            oscillator4.frequency.setValueAtTime(parseFloat(document.getElementById("freq-slider-4").value), audioContext.currentTime);
+            oscillator4.connect(audioContext.destination);
+            const ampSlider4 = document.getElementById("amp-slider-4");
+            oscillator4.gain = audioContext.createGain();
+            oscillator4.gain.gain.setValueAtTime(parseFloat(ampSlider4.value), audioContext.currentTime);
+            oscillator4.connect(oscillator4.gain);
+            oscillator4.gain.connect(audioContext.destination);
+
+            oscillator4 = audioContext.createOscillator();
+            oscillator4.type = document.getElementById("waveform-select-4").value;
+            oscillator4.frequency.setValueAtTime(parseFloat(document.getElementById("freq-slider-4").value), audioContext.currentTime);
+            oscillator4.connect(gainNode4); // Conectar el oscilador al nodo de ganancia 1
+            gainNode4.connect(audioContext.destination); // Conectar el nodo de ganancia al destino de audio
+            gainNode4.gain.setValueAtTime(parseFloat(document.getElementById("amp-slider-4").value), audioContext.currentTime);
+
+            const analyserNode = audioContext.createAnalyser();
+            analyserNode.fftSize = 2048;
+            const bufferLength = analyserNode.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            gainNode1.connect(analyserNode);
+            gainNode2.connect(analyserNode);
+            gainNode3.connect(analyserNode);
+            gainNode4.connect(analyserNode);
+            analyserNode.connect(audioContext.destination);
+
+            initializeCanvas();
+
+            const osc1Enabled = document.getElementById("oscillator-enable-1").checked;
+            if (osc1Enabled) {
+                //oscillator1.start();
+            }
+            //oscillator1.start();
+
+            const osc2Enabled = document.getElementById("oscillator-enable-2").checked;
+            if (osc2Enabled) {
+              //  oscillator2.start();
+            }
+
+            const osc3Enabled = document.getElementById("oscillator-enable-3").checked;
+            if (osc3Enabled) {
+               // oscillator3.start();
+            }
+
+            const osc4Enabled = document.getElementById("oscillator-enable-4").checked;
+            if (osc4Enabled) {
+                oscillator4.start();
+            }
+            //oscillator2.start();
+            //oscillator3.start();
+
+            function updateCanvas() {
+                analyserNode.getByteTimeDomainData(dataArray);
+                drawWaveform(dataArray);
+                requestAnimationFrame(updateCanvas);
+            }
+
+            updateCanvas();
+        }
+
+
+        // Evento para actualizar el tipo de onda del oscilador 1
+        //frecuencia
+        document.getElementById("freq-slider-1").addEventListener("input", function () {
+            oscillator1.frequency.setValueAtTime(parseFloat(this.value), audioContext.currentTime);
+            document.getElementById("freq-value-1").textContent = this.value + " Hz";
+        });
+        //amplitud
+        document.getElementById("amp-slider-1").addEventListener("input", function () {
+            gainNode1.gain.setValueAtTime(parseFloat(this.value), audioContext.currentTime);
+            document.getElementById("amp-value-1").textContent = this.value + " dB ";
+
+        });
+        //forma de onda     
+        document.getElementById("waveform-select-1").addEventListener("change", function () {
+            oscillator1.type = this.value;
+        });
+        //encender y apagar osc
+        document.getElementById("oscillator-enable-1").addEventListener("change", function () {
+            if (this.checked) {
+                startSynthesis();
+                oscillator1.start();
+            } else {
+                oscillator1.stop();
+            }
+        });
+
+        // Evento para actualizar el tipo de onda del oscilador 2
+        document.getElementById("freq-slider-2").addEventListener("input", function () {
+            oscillator2.frequency.setValueAtTime(parseFloat(this.value), audioContext.currentTime);
+            document.getElementById("freq-value-2").textContent = this.value + " Hz";
+        });
+
+        document.getElementById("amp-slider-2").addEventListener("input", function () {
+            gainNode2.gain.setValueAtTime(parseFloat(this.value), audioContext.currentTime);
+            document.getElementById("amp-value-2").textContent = this.value + " dB ";
+        });
+
+        document.getElementById("waveform-select-2").addEventListener("change", function () {
+            oscillator2.type = this.value;
+        });
+        //encender y apagar osc
+        document.getElementById("oscillator-enable-2").addEventListener("change", function () {
+            if (this.checked) {
+                //startSynthesis();
+                oscillator2.start();
+            } else {
+                oscillator2.stop();
+
+            }
+        });
+
+        // Evento para actualizar el tipo de onda del oscilador 3
+        document.getElementById("freq-slider-3").addEventListener("input", function () {
+            oscillator3.frequency.setValueAtTime(parseFloat(this.value), audioContext.currentTime);
+            document.getElementById("freq-value-3").textContent = this.value + " Hz";
+        });
+
+        document.getElementById("amp-slider-3").addEventListener("input", function () {
+            gainNode3.gain.setValueAtTime(parseFloat(this.value), audioContext.currentTime);
+            document.getElementById("amp-value-3").textContent = this.value + " dB ";
+        });
+
+        document.getElementById("waveform-select-3").addEventListener("change", function () {
+            oscillator3.type = this.value;
+        });
+        //encender y apagar osc
+        document.getElementById("oscillator-enable-3").addEventListener("change", function () {
+            if (this.checked) {
+                //startSynthesis();
+                oscillator3.start();
+            } else {
+                oscillator3.stop();
+            }
+        });
+
+        // Evento para actualizar el tipo de onda del oscilador 3
+        document.getElementById("freq-slider-4").addEventListener("input", function () {
+            oscillator4.frequency.setValueAtTime(parseFloat(this.value), audioContext.currentTime);
+            document.getElementById("freq-value-4").textContent = this.value + " Hz";
+        });
+
+        document.getElementById("amp-slider-4").addEventListener("input", function () {
+            gainNode4.gain.setValueAtTime(parseFloat(this.value), audioContext.currentTime);
+            document.getElementById("amp-value-4").textContent = this.value + " dB ";
+        });
+
+        document.getElementById("waveform-select-4").addEventListener("change", function () {
+            oscillator4.type = this.value;
+        });
+        //encender y apagar osc
+        document.getElementById("oscillator-enable-4").addEventListener("change", function () {
+            if (this.checked) {
+                //startSynthesis();
+                oscillator4.start();
+            } else {
+                oscillator4.stop();
+            }
+        });
+    </script>
+</body>
+
+</html>

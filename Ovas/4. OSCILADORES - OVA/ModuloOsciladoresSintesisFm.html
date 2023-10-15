@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Síntesis FM </title>
+</head>
+
+<body>
+
+    <div style="text-align: center;">
+        <h1>Síntesis FM</h1>
+
+
+        <div>
+            <label for="carrierFrequency">Oscilador Operador:</label>
+            <input type="range" style="accent-color: #F0A762" id="carrierFrequency" min="20" max="2000" value="440">
+            <span id="carrierFrequencyDisplay">440 Hz</span>                
+        </div>
+
+
+        <div>
+            <label for="modulatorFrequency">Oscilador Modulador:</label>
+            <input type="range" style="accent-color: #F0A762" id="modulatorFrequency" min="20" max="2000" value="220">
+            <span id="modulatorFrequencyDisplay">220 Hz</span>
+        </div>
+
+
+        <div>
+            <label for="modulationAmount">Cantidad de Modulación:</label>
+            <input type="range" style="accent-color: #F0A762" id="modulationAmount" min="0" max="100" value="50">
+            <span id="modulationAmountDisplay">50%</span>
+
+         </div>
+
+
+        <div>
+            <h2>Analizador de Onda</h2>
+            <canvas id="waveformCanvas" style="border:1px solid #121574;" width="800" height="300"></canvas>
+        </div>
+
+
+        <div>
+            <button id="startButton"style="border-radius: 15px; padding: 10px; font-family: 'comic sans ms', sans-serif; background-color: rgb(0%, 244%, 227%); 
+                color: black; text-decoration: none; box-shadow: 3px 3px 5px grey;" onclick="reproducirOnda()">Reproducir Sonido</button>
+            <button id="stopButton" style="border-radius: 15px; padding: 10px; font-family: 'comic sans ms', sans-serif; background-color: rgb(0%, 244%, 227%); 
+                color: black; text-decoration: none; box-shadow: 3px 3px 5px grey;" onclick="detenerOnda()">Detener Sonido</button>
+        </div>
+    </div>
+   
+
+    <script>
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let isAudioPlaying = false;
+        let carrierOscillator;
+        let modulatorOscillator;
+        let fmOscillator;
+        let gainNode;
+        let analyser;
+    
+        function reproducirOnda() {
+
+            audioContext = new AudioContext();
+
+            const startButton = document.getElementById("startButton");
+            const stopButton = document.getElementById("stopButton");
+
+            let carrierFrequencySlider = document.getElementById("carrierFrequency");
+            let carrierFrequencyDisplay = document.getElementById("carrierFrequencyDisplay");
+
+            let modulatorFrequencySlider = document.getElementById("modulatorFrequency");
+            let modulatorFrequencyDisplay = document.getElementById("modulatorFrequencyDisplay");
+
+            let modulationAmountSlider = document.getElementById("modulationAmount");
+            let modulationAmountDisplay = document.getElementById("modulationAmountDisplay");
+
+            let waveformCanvas = document.getElementById("waveformCanvas");
+            let waveformCanvasContext = waveformCanvas.getContext("2d");
+
+            carrierOscillator = audioContext.createOscillator();
+            modulatorOscillator = audioContext.createOscillator();
+            gainNode = audioContext.createGain();
+
+            carrierOscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            modulatorOscillator.connect(gainNode.gain);
+/*
+            startButton.addEventListener("click", () => {
+                if (!isAudioPlaying) {
+                    carrierOscillator.start();
+                    modulatorOscillator.start();
+                    isAudioPlaying = true;
+                }
+            });
+
+            stopButton.addEventListener("click", () => {
+                if (isAudioPlaying) {
+                    carrierOscillator.stop();
+                    modulatorOscillator.stop();
+                    isAudioPlaying = false;
+                }
+            });*/
+
+            carrierFrequencySlider.addEventListener("input", () => {
+                const frequency = parseFloat(carrierFrequencySlider.value);
+                carrierOscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                carrierFrequencyDisplay.textContent = frequency + " Hz";
+            });
+
+            modulatorFrequencySlider.addEventListener("input", () => {
+                const frequency = parseFloat(modulatorFrequencySlider.value);
+                modulatorOscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                modulatorFrequencyDisplay.textContent = frequency + " Hz";
+            });
+
+            modulationAmountSlider.addEventListener("input", () => {
+                const amount = parseFloat(modulationAmountSlider.value) / 100;
+                modulatorOscillator.frequency.setValueAtTime(carrierOscillator.frequency.value * amount, audioContext.currentTime);
+                modulationAmountDisplay.textContent = (amount * 100) + "%";
+            });
+
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 2048;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            const fmOscillator = audioContext.createOscillator();
+            const fmGainNode = audioContext.createGain();
+            fmOscillator.connect(fmGainNode);
+            fmGainNode.connect(carrierOscillator.frequency);
+
+            carrierOscillator.connect(analyser);
+            modulatorOscillator.connect(analyser);
+            // fmOscillator.connect(analyser);
+
+            
+
+            function drawWaveform() {
+                analyser.getByteTimeDomainData(dataArray);
+
+                waveformCanvasContext.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+                waveformCanvasContext.strokeStyle = "black";
+                waveformCanvasContext.lineWidth = 2;
+                waveformCanvasContext.beginPath();
+
+                const sliceWidth = waveformCanvas.width / bufferLength;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = v * waveformCanvas.height / 2;
+
+                    if (i === 0) {
+                        waveformCanvasContext.moveTo(x, y);
+                    } else {
+                        waveformCanvasContext.lineTo(x, y);
+                    }
+
+                    x += sliceWidth;
+                }
+
+                waveformCanvasContext.lineTo(waveformCanvas.width, waveformCanvas.height / 2);
+                waveformCanvasContext.stroke();
+
+                requestAnimationFrame(drawWaveform);
+            }
+
+            carrierOscillator.start();
+             modulatorOscillator.start();
+             fmOscillator.start();
+            drawWaveform();
+
+        }
+
+        function detenerOnda() {
+        if (carrierOscillator ) {
+            carrierOscillator.stop();
+            carrierOscillator.disconnect();
+            modulatorOscillator.stop();
+            modulatorOscillator.disconnect();
+            fmOscillator.stop();
+            fmOscillator.disconnect();
+            
+        }
+    }
+    </script>
+</body>
+
+</html>

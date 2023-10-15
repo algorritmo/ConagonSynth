@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>EL Sonido</title>
+    <style>
+        label {
+            font-family: sans-serif;
+            font-size: 1rem;
+            padding-right: 10px;
+        }
+
+        select {
+            font-size: 0.9rem;
+            padding: 2px 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="text-align: center;">
+        <h1 style="font-family: 'comic sans ms', sans-serif;">Interactúa con la onda, observa la afectación sonora y
+            visual de modificar la frecuencia y la amplitud</h1>
+        <div>
+            <label style="font-family: 'comic sans ms', sans-serif;" for="frequency-slider">Frecuencia:</label>
+            <input id="frequency-slider" type="range" min="20" max="2000" step="1" />
+            <span id="frequency-value">440</span> Hz
+        </div>
+        <div>
+            <label style="font-family: 'comic sans ms', sans-serif;" for="amplitude-slider">Amplitud:</label>
+            <input id="amplitude-slider" type="range" min="0" max="1" step="0.01" />
+            <span id="amplitude-value">0.5</span> dB
+        </div>
+        <div style="border-radius: 15px; padding: 10px;"></div>
+        <div>
+            <label  style="font-family: 'comic sans ms', sans-serif;" for="wave-type">Tipo de Onda:</label>
+            <select id="wave-type" onchange="changeWaveType()">
+                <option value="sine">Senoidal</option>
+                <option value="square">Cuadrada</option>
+                <option value="triangle">Triangular</option>
+                <option value="sawtooth">Dientes de Sierra</option>
+            </select>
+        </div>
+        <div style="border-radius: 15px; padding: 10px;"></div>
+        <div>
+            <label style="font-family: 'comic sans ms', sans-serif;">Espectro del sonido</label>
+        </div>
+
+        <div>
+            <canvas id="waveform" width="600" height="300" style="border:1px solid #121574;"></canvas>
+        </div>
+        <button style="border-radius: 15px; padding: 10px; font-family: 'comic sans ms', sans-serif; background-color: rgb(0%, 244%, 227%);
+        color: black; text-decoration: none; box-shadow: 3px 3px 5px grey;" onclick="reproducirOnda()">Reproducir
+            sonido</button>
+        <button style="border-radius: 15px; padding: 10px; font-family: 'comic sans ms', sans-serif; background-color: rgb(0%, 244%, 227%);
+        color: black; text-decoration: none; box-shadow: 3px 3px 5px grey;" onclick="detenerOnda()">Detener
+            sonido</button>
+    </div>
+
+    <script>
+        let audioContext;
+        let oscillatorNode;
+        let gainNode;
+        let analyserNode;
+        function changeWaveType() {
+            if (oscillatorNode) {
+                oscillatorNode.type = document.getElementById("wave-type").value;
+            }
+        }
+        function reproducirOnda() {
+            // Crear el contexto de audio
+            audioContext = new AudioContext();
+
+            // Crear un nodo Oscillator
+            oscillatorNode = audioContext.createOscillator();
+
+            // Crear un nodo Gain
+            gainNode = audioContext.createGain();
+
+            // Conectar el nodo Oscillator al nodo Gain y luego al destino de audio
+            oscillatorNode.type = document.getElementById("wave-type").value;
+            oscillatorNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            // Obtener los elementos del DOM
+            let btnPower = document.getElementById("btnPower");
+            let frequencySlider = document.getElementById("frequency-slider");
+            let amplitudeSlider = document.getElementById("amplitude-slider");
+            let frequencyValue = document.getElementById("frequency-value");
+            let amplitudeValue = document.getElementById("amplitude-value");
+
+            // Configurar los valores iniciales de los sliders
+            frequencySlider.value = oscillatorNode.frequency.value;
+            amplitudeSlider.value = gainNode.gain.value;
+
+            // Actualizar la frecuencia y amplitud de la onda cuando el usuario mueve los sliders
+            frequencySlider.addEventListener("input", function () {
+                oscillatorNode.frequency.setValueAtTime(frequencySlider.value, audioContext.currentTime);
+                frequencyValue.innerHTML = frequencySlider.value;
+            });
+
+            amplitudeSlider.addEventListener("input", function () {
+                gainNode.gain.setValueAtTime(amplitudeSlider.value, audioContext.currentTime);
+                amplitudeValue.innerHTML = amplitudeSlider.value;
+            });
+
+            // Crear un analizador de onda
+            analyserNode = audioContext.createAnalyser();
+
+            // Configurar el analizador de onda
+            analyserNode.fftSize = 2048;
+            let bufferLength = analyserNode.frequencyBinCount;
+            let dataArray = new Uint8Array(bufferLength);
+
+            // Conectar el nodo Gain al analizador de onda y luego al destino de audio
+            gainNode.connect(analyserNode);
+            analyserNode.connect(audioContext.destination);
+
+            // Obtener el canvas del DOM
+            let canvas = document.getElementById("waveform");
+            let canvasContext = canvas.getContext("2d");
+
+            // Dibujar la onda
+            function drawWaveform() {
+                requestAnimationFrame(drawWaveform);
+
+                analyserNode.getByteTimeDomainData(dataArray);
+
+                canvasContext.fillStyle = "white";
+                canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+
+                canvasContext.lineWidth = 2;
+                canvasContext.strokeStyle = "black";
+
+                canvasContext.beginPath();
+
+                let sliceWidth = canvas.width / bufferLength;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    let v = dataArray[i] / 128.0;
+                    let y = v * canvas.height / 2;
+
+                    if (i === 0) {
+                        canvasContext.moveTo(x, y);
+                    } else {
+                        canvasContext.lineTo(x, y);
+                    }
+
+                    x += sliceWidth;
+                }
+
+                canvasContext.lineTo(canvas.width, canvas.height / 2);
+                canvasContext.stroke();
+            }
+
+
+
+            drawWaveform();
+
+            // Iniciar la onda
+            oscillatorNode.start();
+        }
+
+        function detenerOnda() {
+            if (oscillatorNode) {
+                oscillatorNode.stop();
+                oscillatorNode.disconnect();
+            }
+        }
+
+    </script>
+</body>
+
+</html>

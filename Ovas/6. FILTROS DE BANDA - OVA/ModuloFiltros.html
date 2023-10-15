@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Filtros</title>
+</head>
+
+<body>
+    <div style="text-align: center;">
+        <h1>Filtros</h1>
+        <div>
+            <label>Tipo de sonido: </label>
+            <select id='Otra' oninput='UICallback()'>
+                <option value='whiteNoise'>Ruido blanco</option>
+                <option value='pinkNoise'>Ruido rosa</option>
+            </select>
+        </div>
+        <div>
+            <label>Tipo de filtro: </label>
+            <select id='Type' oninput='UICallback()'>
+                <option value='lowpass'>lowpass</option>
+                <option value='highpass'>highpass</option>
+                <option value='bandpass'>bandpass</option>
+                <option value='notch'>notch</option>
+                <option value='allpass'>allpass</option>
+            </select>
+        </div>
+        <div>
+            <label for="Frequency">CuteOff (frecuencia): </label>
+            <input id='Frequency' type='range' style="accent-color: #F0A762" max=20000 value=800 oninput='UICallback()'>
+            <span id="carrierFrequencyDisplay">800 Hz</span>
+        </div>
+        <div>
+            <label>Resonancia("Q"): </label>
+            <input id='Q' type='range' style="accent-color: #F0A762" min=-50 max=50 value=1 oninput='UICallback()'>
+            <span id="amplitudDisplay">1 dB</span>
+        </div>
+        <div>
+            <canvas id='canvas' width='920' height='300' style='border:1px solid'></canvas><br>
+            <div id="xAxisValues" style="display: inline-block; margin-top: 10px;"></div>
+        </div>
+        <br>
+        <div>
+            <button id='start' style="border-radius: 15px; padding: 10px; font-family: 'comic sans ms', sans-serif; background-color: rgb(0%, 244%, 227%); 
+            color: black; text-decoration: none; box-shadow: 3px 3px 5px grey;">Iniciar sonido</button>
+            <button id='detener' style="border-radius: 15px; padding: 10px; font-family: 'comic sans ms', sans-serif; background-color: rgb(0%, 244%, 227%); 
+            color: black; text-decoration: none; box-shadow: 3px 3px 5px grey;">Detener sonido</button>
+        </div>
+    </div>
+
+    <script>
+        var audioContext = new AudioContext()
+        var canvas = document.getElementById('canvas');
+        var canvasContext = canvas.getContext('2d');
+        var nFreqs = 100,
+            Freqs = new Float32Array(nFreqs),
+            Mags = new Float32Array(nFreqs),
+            Phases = new Float32Array(nFreqs);
+
+        let carrierFrequencySlider = document.getElementById("Frequency");
+        let carrierFrequencyDisplay = document.getElementById("carrierFrequencyDisplay");
+        let amplitudSlider = document.getElementById("Q");
+        let amplitudDisplay = document.getElementById("amplitudDisplay");
+
+        for (var i = 0; i < nFreqs; ++i) Freqs[i] = 20000 / nFreqs * (i + 1);
+        var biquadFilter = new BiquadFilterNode(audioContext, { frequency: 1000, Q: 1 });
+        var source;
+
+        // Función para dibujar el gráfico en el canvas
+        function drawGraph() {
+            canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+            canvasContext.beginPath();
+            for (let i = 0; i < nFreqs; ++i)
+                canvasContext.lineTo(canvas.width * i / nFreqs, canvas.height - Mags[i] * 90);
+            canvasContext.stroke();
+        }
+
+        // Función para actualizar los valores en el eje X
+        function updateXAxisValues() {
+            const xAxisValuesDiv = document.getElementById('xAxisValues');
+            xAxisValuesDiv.innerHTML = '';
+
+            for (let i = 0; i <= 20; i++) {
+                const value = i.toString();
+                const freq = 'kHz'; // Agrega "kHz"
+
+                // Crea un contenedor para el valor y "kHz"
+                const container = document.createElement('span');
+
+                // Agrega el valor
+                const valueSpan = document.createElement('span');
+                valueSpan.textContent = value;
+                container.appendChild(valueSpan);
+
+                // Agrega "kHz" con un tamaño de fuente más pequeño
+                const freqSpan = document.createElement('span');
+                freqSpan.textContent = freq;
+                freqSpan.style.fontSize = '10px'; // Establece el tamaño de fuente más pequeño
+                container.appendChild(freqSpan);
+
+                container.style.marginRight = '17px'; // Espacio entre los valores
+                xAxisValuesDiv.appendChild(container);
+            }
+        }
+
+        function UICallback() {
+            // Detener el sonido existente si hay uno
+            if (source) {
+                source.disconnect();
+                source.stop();
+            }
+
+            if (Otra.value === 'whiteNoise') {
+                source = audioContext.createBufferSource();
+                let nFrames = audioContext.sampleRate;
+                let buffer = audioContext.createBuffer(1, nFrames, audioContext.sampleRate);
+
+                // Generar ruido blanco y llenar el búfer
+                let output = buffer.getChannelData(0);
+                for (let i = 0; i < nFrames; i++) {
+                    output[i] = Math.random() * 2 - 1; // Ruido blanco
+                }
+
+                source.buffer = buffer;
+                source.loop = true;
+            } else if (Otra.value === 'pinkNoise') {
+                source = audioContext.createBufferSource();
+                let nFrames = audioContext.sampleRate;
+                let buffer = audioContext.createBuffer(1, nFrames, audioContext.sampleRate);
+
+                // Generar ruido rosa y llenar el búfer
+                let output = buffer.getChannelData(0);
+                let lastValue = 0;
+                for (let i = 0; i < nFrames; i++) {
+                    let whiteNoise = Math.random() * 2 - 1; // Ruido blanco
+                    lastValue = 0.02 * whiteNoise + 0.98 * lastValue; // Filtro de ruido rosa
+                    output[i] = lastValue;
+                }
+
+                source.buffer = buffer;
+                source.loop = true;
+            }
+
+            source.connect(biquadFilter).connect(audioContext.destination);
+            source.start();
+
+            biquadFilter.frequency.value = Frequency.value;
+            biquadFilter.Q.value = Q.value;
+            //  biquadFilter.gain.value = Gain.value;
+            biquadFilter.type = Type.value;
+            biquadFilter.getFrequencyResponse(Freqs, Mags, Phases);
+
+            // Actualiza los valores en tiempo real
+            carrierFrequencyDisplay.textContent = Frequency.value + ' Hz';
+            amplitudDisplay.textContent = Q.value + ' dB';
+
+            // Dibuja el gráfico en el canvas
+            drawGraph();
+
+            // Actualiza los valores en el eje X
+            updateXAxisValues();
+        }
+
+        start.onclick = () => {
+            audioContext.resume();
+            UICallback();
+        }
+
+        detener.onclick = () => {
+            if (source) {
+                source.disconnect();
+                source.stop();
+            }
+            biquadFilter.disconnect();
+        }
+
+        // Llama a la función para actualizar los valores en el eje X al cargar la página
+        updateXAxisValues();
+    </script>
+</body>
+
+</html>
