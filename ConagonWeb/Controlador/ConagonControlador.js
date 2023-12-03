@@ -779,7 +779,7 @@ function sintetizador() {
 
     // Attack -> Decay -> Sustain
     const gainNode = audioContext.createGain();
-    /*gainNodeOsc1 = audioContext.createGain();
+    gainNodeOsc1 = audioContext.createGain();
     gainNodeOsc1.connect(audioContext.destination);
     gainNodeOsc1.gain.setValueAtTime(0, t_pressed);
     gainNodeOsc1.gain.linearRampToValueAtTime(VolumenOsc1, t_pressed + attackDuration);
@@ -789,14 +789,14 @@ function sintetizador() {
     gainNodeOsc2.connect(audioContext.destination);
     gainNodeOsc2.gain.setValueAtTime(0, t_pressed);
     gainNodeOsc2.gain.linearRampToValueAtTime(VolumenOsc2, t_pressed + attackDuration);
-    gainNodeOsc2.gain.setTargetAtTime(sustainLevel * VolumenOsc2, t_pressed + attackDuration, decayDuration);*/
+    gainNodeOsc2.gain.setTargetAtTime(sustainLevel * VolumenOsc2, t_pressed + attackDuration, decayDuration);
 
-    gainNodeOscAll = audioContext.createGain();
+    /*gainNodeOscAll = audioContext.createGain();
     gainNodeOscAll.connect(audioContext.destination);
     gainNodeOscAll.gain.setValueAtTime(0, t_pressed);
     gainNodeOscAll.gain.linearRampToValueAtTime(volumenAll, t_pressed + attackDuration);
     gainNodeOscAll.gain.setTargetAtTime(sustainLevel * volumenAll, t_pressed + attackDuration, decayDuration);
-
+*/
     const keyID = note + octave;
     /*OSCILADOR 1*/
 
@@ -817,13 +817,13 @@ function sintetizador() {
       /*OSCILADOR 2*/
       if (stateOsc2) {
         const typeOsc2 = wavePicker2
-        const oscillator2 = new Oscillator2(typeOsc2, frequency, gainNodeOscAll, delayNode, feedbackGainNode);
+        const oscillator2 = new Oscillator2(typeOsc2, frequency, gainNodeOsc2, delayNode, feedbackGainNode);
         oscillator2.start();
         oscillatorMap.set(keyID, oscillator2);
       }
     }
 
-    gainNodeMapOsc1.set(keyID, gainNodeOscAll);
+    gainNodeMapOsc1.set(keyID, gainNodeOsc1);
     gainNodeMapOsc2.set(keyID, gainNodeOsc2);
   }
 
@@ -853,19 +853,24 @@ function sintetizador() {
     const oscillator2 = oscillatorMap.get(keyID);
     const gainNodeOsc1 = gainNodeMapOsc1.get(keyID);
     const gainNodeOsc2 = gainNodeMapOsc2.get(keyID);
-    const gainNodeOscAll = gainNodeOsc1 + gainNodeOsc2;
+    //const gainNodeOscAll = gainNodeOsc1 + gainNodeOsc2;
 
     const t_released = audioContext.currentTime;
     const timeScale = parseFloat(timeScaleControl.value);
     const releaseDuration = parseFloat(releaseControl.value) * timeScale;
 
-    gainNodeOscAll.gain.cancelScheduledValues(t_released);
-    gainNodeOscAll.gain.setValueAtTime(gainNodeOscAll.gain.value, t_released);
-    gainNodeOscAll.gain.linearRampToValueAtTime(0, t_released + releaseDuration);
+    //gainNodeOscAll.gain.cancelScheduledValues(t_released);
+    //gainNodeOscAll.gain.setValueAtTime(gainNodeOscAll.gain.value, t_released);
+    //gainNodeOscAll.gain.linearRampToValueAtTime(0, t_released + releaseDuration);
 
-    /* gainNodeOsc2.gain.cancelScheduledValues(t_released);
+    gainNodeOsc1.gain.cancelScheduledValues(t_released);
+    gainNodeOsc1.gain.setValueAtTime(gainNodeOsc1.gain.value, t_released);
+    gainNodeOsc1.gain.linearRampToValueAtTime(0, t_released + releaseDuration);
+
+
+     gainNodeOsc2.gain.cancelScheduledValues(t_released);
      gainNodeOsc2.gain.setValueAtTime(gainNodeOsc2.gain.value, t_released);
-     gainNodeOsc2.gain.linearRampToValueAtTime(0, t_released + releaseDuration);*/
+     gainNodeOsc2.gain.linearRampToValueAtTime(0, t_released + releaseDuration);
 
     if (stateOsc1)
       oscillator1.stop(t_released + releaseDuration);
